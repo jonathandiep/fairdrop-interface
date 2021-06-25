@@ -100,7 +100,6 @@ function AirdropForm() {
               <FormControl>
                 <FormLabel htmlFor="startDate">Start Date</FormLabel>
                 <DatePicker
-                  // id="startDate"
                   onChange={(date) =>
                     form.setFieldValue(
                       'startDate',
@@ -121,11 +120,7 @@ function AirdropForm() {
               <FormControl>
                 <FormLabel htmlFor="endDate">End Date</FormLabel>
                 <DatePicker
-                  // id="endDate"
                   onChange={(date) => {
-                    // console.log(date)
-                    // console.log(typeof date)
-                    // console.log(dayjs(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`, 'YYYY-M-D'))
                     form.setFieldValue(
                       'endDate',
                       date
@@ -141,8 +136,7 @@ function AirdropForm() {
             )}
           </Field>
 
-          <Button colorScheme="purple" type="submit" isDisabled={!props.isValid}>
-            {/* <Button colorScheme="purple" type="submit" isLoading={props.isSubmitting} isDisabled={!props.isValid}> */}
+          <Button colorScheme="purple" type="submit" isLoading={props.isSubmitting} isDisabled={!props.isValid}>
             See Audience
           </Button>
         </Form>
