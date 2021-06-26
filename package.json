@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-merkle-root": "ts-node ./src/generate-merkle-root.ts",
-    "generate-merkle-root:example": "ts-node ./src/generate-merkle-root.ts --input src/example.json",
+    "generate-merkle-root": "ts-node ./merkle/generate-merkle-root.ts",
+    "generate-merkle-root:example": "ts-node ./merkle/generate-merkle-root.ts --input merkle/example.json",
     "prepublishOnly": "yarn test"
   },
   "dependencies": {

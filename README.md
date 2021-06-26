@@ -40,11 +40,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Generate Merkle Root
 
-
 ```
 // generate example
 yarn run generate-merkle-root:example
 
 // generate complex example
-yarn run generate-merkle-root --input ./src/complex-example.json
+yarn run generate-merkle-root --input ./merkle/complex-example.json
 ```
