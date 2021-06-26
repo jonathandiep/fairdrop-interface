@@ -13,6 +13,7 @@
     "@chakra-ui/react": "^1.6.4",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "chakra-paginator": "^0.7.2",
     "dayjs": "^1.10.5",
     "ethers": "^5.3.1",
     "formik": "^2.2.9",
