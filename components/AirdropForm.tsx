@@ -36,13 +36,14 @@ async function checkAudience(values: any, actions: any, setAddresses: any) {
   console.log(values)
 
   if (values.onChainActivity === 'uniswapv3') {
-    const addresses = await getUniswapV3Pool(values.amountUSD, values.startDate, values.endDate)
-    console.log(addresses)
+    // TODO: display error if no addresses
+    const data = await getUniswapV3Pool(values.amountUSD, values.startDate, values.endDate)
+    console.log(data)
 
-    const addressesForExample = addresses?.map((address) => address.origin)
-    console.log({ addresses: addressesForExample })
-
-    setAddresses(addresses)
+    // get unique addresses
+    const set = new Set()
+    data?.forEach((mint) => set.add(mint.origin))
+    setAddresses([...set])
   }
 }
 
