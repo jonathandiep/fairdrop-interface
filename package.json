@@ -17,6 +17,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "commander": "^6.2.1",
+    "chakra-paginator": "^0.7.2",
     "dayjs": "^1.10.5",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.3.1",
