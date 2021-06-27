@@ -6,15 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-merkle-root": "ts-node ./merkle/generate-merkle-root.ts",
+    "generate-merkle-root:example": "ts-node ./merkle/generate-merkle-root.ts --input merkle/example.json",
+    "prepublishOnly": "yarn test"
   },
   "dependencies": {
     "@apollo/client": "^3.3.20",
     "@chakra-ui/react": "^1.6.4",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "commander": "^6.2.1",
     "chakra-paginator": "^0.7.2",
     "dayjs": "^1.10.5",
+    "ethereumjs-util": "^7.0.10",
     "ethers": "^5.3.1",
     "formik": "^2.2.9",
     "framer-motion": "^4",
@@ -22,7 +27,12 @@
     "next": "11.0.0",
     "react": "17.0.2",
     "react-datepicker": "^4.1.1",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "ts-node": "^8.10.2",
+    "util": "^0.12.3"
+  },
+  "engines": {
+    "node": ">=10"
   },
   "devDependencies": {
     "@types/react": "17.0.11",

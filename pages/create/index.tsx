@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import { Button, Box, Container, Flex, Heading, Spacer, Table, Tbody, Thead, Td, Th, Tr } from '@chakra-ui/react'
 import { Container as PaginatorContainer, Next, PageGroup, Paginator, Previous, usePaginator } from 'chakra-paginator'
 
+import { parseBalanceMap } from '../../merkle/parse-balance-map'
 import { AddressesContext } from '../../contexts'
 import Header from '../../components/Header'
 
@@ -21,16 +22,31 @@ const paginationActiveStyles = {
 }
 
 function Create() {
-  const [addresses, setAddresses] = useState<any[]>([])
-  // const [page, setPage] = useState(1)
+  const [addresses, setAddresses] = useState<string[]>([])
   const [pageQuantity, setPageQuantity] = useState(1)
+  const [merkleData, setMerkleData] = useState<any>()
   const { currentPage, setCurrentPage } = usePaginator({
     initialState: { pageSize: NUM_OF_ROWS, currentPage: 1 },
   })
 
   useEffect(() => {
-    const pages = Math.ceil(addresses.length / NUM_OF_ROWS)
-    setPageQuantity(pages)
+    if (addresses.length > 0) {
+      const pages = Math.ceil(addresses.length / NUM_OF_ROWS)
+      setPageQuantity(pages)
+
+      console.log(addresses)
+      // calculate merkle root
+      const addrLeaves = addresses.map((address) => {
+        return {
+          address,
+          earnings: '100', // wat do
+          reasons: '',
+        }
+      })
+      const merkle = parseBalanceMap(addrLeaves)
+      console.log(merkle)
+      setMerkleData(merkle)
+    }
   }, [addresses])
 
   const providerAddresses = useMemo(() => ({ addresses, setAddresses }), [addresses, setAddresses])
@@ -63,7 +79,7 @@ function Create() {
                   {addresses.slice((currentPage - 1) * NUM_OF_ROWS, currentPage * NUM_OF_ROWS).map((addr, idx) => (
                     <Tr key={idx}>
                       <Td>{(currentPage - 1) * NUM_OF_ROWS + idx + 1}</Td>
-                      <Td>{addr.origin}</Td>
+                      <Td>{addr}</Td>
                     </Tr>
                   ))}
                 </Tbody>
