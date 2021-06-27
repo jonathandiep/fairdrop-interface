@@ -1,5 +1,8 @@
 import { useContext } from 'react'
+import { useRouter } from 'next/router'
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, Textarea } from '@chakra-ui/react'
+import { useWeb3React } from '@web3-react/core'
+import { Web3Provider } from '@ethersproject/providers'
 import { Formik, Form, Field } from 'formik'
 import { ContractFactory } from 'ethers'
 import dayjs from 'dayjs'
@@ -7,10 +10,14 @@ import dayjs from 'dayjs'
 import { validateAddress, validatePositiveNumber, validateString } from '../utils'
 import { parseBalanceMap } from '../merkle/parse-balance-map'
 import { AddressesContext } from '../contexts'
+import MerkleDistributor from '../data/MerkleDistibutor.sol/MerkleDistributor.json'
 
 import DatePicker from './DatePicker'
 
 function CampaignForm() {
+  const { library, account } = useWeb3React<Web3Provider>()
+  const router = useRouter()
+
   const initValues = {
     campaignName: '',
     campaignDescription: '',
@@ -22,7 +29,7 @@ function CampaignForm() {
 
   const { addresses } = useContext(AddressesContext)
 
-  const createCampaign = (values: any, actions: any) => {
+  const createCampaign = async (values: any, actions: any) => {
     console.log(values)
 
     // generate merkle root
@@ -35,6 +42,19 @@ function CampaignForm() {
     })
     const merkle = parseBalanceMap(addrLeaves)
     console.log(merkle)
+
+    if (library && account) {
+      const signer = library.getSigner(account)
+
+      const factory = new ContractFactory(MerkleDistributor.abi, MerkleDistributor.bytecode, signer)
+      try {
+        const contract = await factory.deploy(values.tokenAddress, merkle.merkleRoot)
+        await contract.deployTransaction.wait()
+        router.push(`/campaigns/${contract.address}`)
+      } catch (err) {
+        console.error(err)
+      }
+    }
   }
 
   return (
@@ -121,7 +141,13 @@ function CampaignForm() {
                 </FormControl>
               )}
             </Field>
-            <Button colorScheme="purple" type="submit" isDisabled={!props.isValid} mt={3}>
+            <Button
+              colorScheme="purple"
+              type="submit"
+              isLoading={props.isSubmitting}
+              isDisabled={!props.isValid}
+              mt={3}
+            >
               Create Airdrop Contract
             </Button>
           </Form>

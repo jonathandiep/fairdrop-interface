@@ -1,18 +1,10 @@
-import type { MouseEvent } from 'react'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { Box, Container, Button, Divider, Heading, Text } from '@chakra-ui/react'
+import Link from 'next/link'
+import { Box, Container, Button, Divider, Heading } from '@chakra-ui/react'
 
 import Header from '../components/Header'
 
 export default function Home() {
-  const router = useRouter()
-
-  const handleClick = (e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, route: string) => {
-    e.preventDefault()
-    router.push(route)
-  }
-
   return (
     <div>
       <Head>
@@ -26,22 +18,31 @@ export default function Home() {
         <Heading as="h1" size="lg">
           Create an Airdrop Campaign
         </Heading>
-        <Text>TODO: Add info & graphics on this page</Text>
         <Box mt={3}>
-          <Button colorScheme="green" mr={3} onClick={(e) => handleClick(e, '/create')}>
-            Create
-          </Button>
-          <Button colorScheme="blue" onClick={(e) => handleClick(e, '/view')}>
-            View
-          </Button>
+          <Link href="/create">
+            <a>
+              <Button colorScheme="green" mr={3}>
+                Create
+              </Button>
+            </a>
+          </Link>
+          <Link href="/campaigns">
+            <a>
+              <Button colorScheme="blue">View</Button>
+            </a>
+          </Link>
         </Box>
         <Divider my={5} />
         <Heading as="h1" size="lg">
           Check Your Airdrops
         </Heading>
-        <Button colorScheme="green" mt={3} onClick={(e) => handleClick(e, '/claim')}>
-          Claim
-        </Button>
+        <Link href="/claim">
+          <a>
+            <Button colorScheme="green" mt={3}>
+              Claim
+            </Button>
+          </a>
+        </Link>
       </Container>
     </div>
   )

@@ -13,26 +13,6 @@ import DatePicker from './DatePicker'
 dayjs.extend(utc)
 dayjs.extend(customParseFormat)
 
-// function validateString(str: string, errorName: string) {
-//   let error
-
-//   if (!str || str.length === 0) {
-//     error = `${errorName} required`
-//   }
-
-//   return error
-// }
-
-// function validateAmountUSD(number: number) {
-//   let error
-
-//   if (!number) {
-//     error = 'Amount USD required or greater than 0'
-//   }
-
-//   return error
-// }
-
 async function checkAudience(values: any, actions: any, setAddresses: any) {
   console.log(values)
 
@@ -52,7 +32,6 @@ function AirdropForm() {
   const { addresses, setAddresses } = useContext(AddressesContext)
   const initValues = {
     audienceName: '',
-    // token: '',
     onChainActivity: '',
     amountUSD: 0,
     startDate: undefined,
