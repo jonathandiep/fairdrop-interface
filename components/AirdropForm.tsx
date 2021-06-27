@@ -7,30 +7,31 @@ import utc from 'dayjs/plugin/utc'
 
 import { AddressesContext } from '../contexts'
 import { getUniswapV3Pool } from '../data'
+import { validateString, validatePositiveNumber } from '../utils'
 import DatePicker from './DatePicker'
 
 dayjs.extend(utc)
 dayjs.extend(customParseFormat)
 
-function validateString(str: string, errorName: string) {
-  let error
+// function validateString(str: string, errorName: string) {
+//   let error
 
-  if (!str || str.length === 0) {
-    error = `${errorName} required`
-  }
+//   if (!str || str.length === 0) {
+//     error = `${errorName} required`
+//   }
 
-  return error
-}
+//   return error
+// }
 
-function validateAmountUSD(number: number) {
-  let error
+// function validateAmountUSD(number: number) {
+//   let error
 
-  if (!number) {
-    error = 'Amount USD required or greater than 0'
-  }
+//   if (!number) {
+//     error = 'Amount USD required or greater than 0'
+//   }
 
-  return error
-}
+//   return error
+// }
 
 async function checkAudience(values: any, actions: any, setAddresses: any) {
   console.log(values)
@@ -80,14 +81,18 @@ function AirdropForm() {
                   onChange={(event) => form.setFieldValue('onChainActivity', event.target.value)}
                 >
                   <option value="uniswapv3">Uniswap v3 LP</option>
-                  <option value="uniswapv2">Uniswap v2 LP</option>
-                  <option value="sushiSwap">SushiSwap LP</option>
+                  <option value="uniswapv2" disabled>
+                    Uniswap v2 LP
+                  </option>
+                  <option value="sushiSwap" disabled>
+                    SushiSwap LP
+                  </option>
                 </Select>
                 <FormErrorMessage>{form.errors.onChainActivity}</FormErrorMessage>
               </FormControl>
             )}
           </Field>
-          <Field name="amountUSD" validate={validateAmountUSD}>
+          <Field name="amountUSD" validate={(num: number) => validatePositiveNumber(num, 'USD')}>
             {({ field, form }: any) => (
               <FormControl isInvalid={form.errors.amountUSD && form.touched.amountUSD}>
                 <FormLabel htmlFor="amountUSD">Minimum Amount USD</FormLabel>

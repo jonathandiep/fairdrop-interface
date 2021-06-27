@@ -13,6 +13,7 @@ interface Props {
 const DatePicker = ({ selectedDate, onChange, isClearable = false, showPopperArrow = false, ...props }: Props) => {
   return (
     <ReactDatePicker
+      placeholderText="MM/DD/YYYY"
       selected={selectedDate}
       onChange={onChange}
       isClearable={isClearable}
