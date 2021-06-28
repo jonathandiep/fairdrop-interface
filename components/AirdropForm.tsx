@@ -31,7 +31,6 @@ async function checkAudience(values: any, actions: any, setAddresses: any) {
 function AirdropForm() {
   const { addresses, setAddresses } = useContext(AddressesContext)
   const initValues = {
-    audienceName: '',
     onChainActivity: '',
     amountUSD: 0,
     startDate: undefined,
@@ -42,15 +41,6 @@ function AirdropForm() {
     <Formik initialValues={initValues} onSubmit={(c, v) => checkAudience(c, v, setAddresses)}>
       {(props) => (
         <Form>
-          <Field name="audienceName" validate={(str: string) => validateString(str, 'Audience Name')}>
-            {({ field, form }: any) => (
-              <FormControl isInvalid={form.errors.audienceName && form.touched.audienceName}>
-                <FormLabel htmlFor="audienceName">Audience Name</FormLabel>
-                <Input {...field} id="audienceName" />
-                <FormErrorMessage>{form.errors.audienceName}</FormErrorMessage>
-              </FormControl>
-            )}
-          </Field>
           <Field name="onChainActivity" as="select" validate={(str: string) => validateString(str, 'Activity')}>
             {({ field, form }: any) => (
               <FormControl isInvalid={form.errors.onChainActivity && form.touched.onChainActivity}>

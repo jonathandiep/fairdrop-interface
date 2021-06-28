@@ -95,8 +95,8 @@ function Create() {
             Back
           </Button>
         ) : (
-          <Heading as="h1" size="lg">
-            Create an Airdrop
+          <Heading as="h1" size="lg" mb={3}>
+            Select your audience
           </Heading>
         )}
         <AddressesContext.Provider value={providerAddresses}>
