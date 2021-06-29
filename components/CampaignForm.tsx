@@ -5,6 +5,7 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import { Formik, Form, Field } from 'formik'
 import { ContractFactory } from 'ethers'
+import { create } from 'ipfs-http-client'
 import dayjs from 'dayjs'
 
 import { validateAddress, validatePositiveNumber, validateString } from '../utils'
@@ -45,8 +46,17 @@ function CampaignForm() {
 
     if (library && account) {
       const signer = library.getSigner(account)
-
       const factory = new ContractFactory(MerkleDistributor.abi, MerkleDistributor.bytecode, signer)
+      let ipfsPath
+
+      try {
+        const client = create({ url: 'https://ipfs.infura.io:5001' })
+        const { path } = await client.add(JSON.stringify(merkle))
+        ipfsPath = path
+      } catch (err) {
+        console.error(err)
+      }
+
       try {
         const contract = await factory.deploy(values.tokenAddress, merkle.merkleRoot)
         await contract.deployTransaction.wait()
