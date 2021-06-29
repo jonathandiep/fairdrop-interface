@@ -4,14 +4,14 @@ import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, 
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import { Formik, Form, Field } from 'formik'
-import { ContractFactory } from 'ethers'
+import { Contract } from 'ethers'
 import { create } from 'ipfs-http-client'
 import dayjs from 'dayjs'
 
 import { validateAddress, validatePositiveNumber, validateString } from '../utils'
 import { parseBalanceMap } from '../merkle/parse-balance-map'
 import { AddressesContext } from '../contexts'
-import MerkleDistributor from '../data/MerkleDistibutor.sol/MerkleDistributor.json'
+import Fairdrop from '../data/Fairdrop.sol/Fairdrop.json'
 
 import DatePicker from './DatePicker'
 
@@ -46,21 +46,15 @@ function CampaignForm() {
 
     if (library && account) {
       const signer = library.getSigner(account)
-      const factory = new ContractFactory(MerkleDistributor.abi, MerkleDistributor.bytecode, signer)
-      let ipfsPath
+      const contract = new Contract(process.env.NEXT_PUBLIC_FAIRDROP_ADDRESS as string, Fairdrop.abi, signer)
 
       try {
         const client = create({ url: 'https://ipfs.infura.io:5001' })
         const { path } = await client.add(JSON.stringify(merkle))
-        ipfsPath = path
-      } catch (err) {
-        console.error(err)
-      }
 
-      try {
-        const contract = await factory.deploy(values.tokenAddress, merkle.merkleRoot)
-        await contract.deployTransaction.wait()
-        router.push(`/campaigns/${contract.address}`)
+        await contract.addAirdrop(values.tokenAddress, merkle.merkleRoot, path)
+        const count = (await contract.count()).toString()
+        router.push(`/campaigns/${count}`)
       } catch (err) {
         console.error(err)
       }

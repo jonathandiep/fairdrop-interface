@@ -6,10 +6,11 @@ import { Web3Provider } from '@ethersproject/providers'
 import { useEagerConnect } from '../hooks/useEagerConnect'
 import { useInactiveListener } from '../hooks/useInactiveListener'
 import { injected } from '../connectors'
+import { translateChainId } from '../utils'
 
 function Header() {
   const context = useWeb3React<Web3Provider>()
-  const { account, activate } = context
+  const { account, activate, chainId } = context
 
   // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
   const triedEager = useEagerConnect()
@@ -33,6 +34,18 @@ function Header() {
     )
   }
 
+  const Network = () => {
+    if (!chainId) {
+      return null
+    }
+
+    return (
+      <Button colorScheme="orange" variant="outline" ml={2}>
+        {translateChainId(chainId)}
+      </Button>
+    )
+  }
+
   return (
     <header>
       <Flex m={5} flexWrap="wrap">
@@ -45,6 +58,7 @@ function Header() {
         </Link>
         <Spacer />
         <Account />
+        <Network />
       </Flex>
       <Divider mb={5} />
     </header>
