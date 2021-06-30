@@ -1,15 +1,17 @@
 import Link from 'next/link'
 import { Button, Divider, Flex, Heading, Spacer } from '@chakra-ui/react'
+import { CopyIcon } from '@chakra-ui/icons'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { useEagerConnect } from '../hooks/useEagerConnect'
 import { useInactiveListener } from '../hooks/useInactiveListener'
 import { injected } from '../connectors'
+import { translateChainId } from '../utils'
 
 function Header() {
   const context = useWeb3React<Web3Provider>()
-  const { account, activate } = context
+  const { account, activate, chainId } = context
 
   // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
   const triedEager = useEagerConnect()
@@ -29,6 +31,19 @@ function Header() {
     return (
       <Button colorScheme="blue" variant="outline" onClick={() => navigator.clipboard.writeText(account)}>
         {`${account.substring(0, 6)}...${account.substring(account.length - 4)}`}
+        <CopyIcon ml={1} color="blue.400" />
+      </Button>
+    )
+  }
+
+  const Network = () => {
+    if (!chainId) {
+      return null
+    }
+
+    return (
+      <Button colorScheme="orange" variant="outline" ml={2}>
+        {translateChainId(chainId)}
       </Button>
     )
   }
@@ -45,6 +60,7 @@ function Header() {
         </Link>
         <Spacer />
         <Account />
+        <Network />
       </Flex>
       <Divider mb={5} />
     </header>
