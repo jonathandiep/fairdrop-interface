@@ -2,11 +2,14 @@ import Head from 'next/head'
 import { GetServerSideProps } from 'next'
 import { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Box, Button, Container, Flex, Heading, Text } from '@chakra-ui/react'
-import { BigNumber, Contract } from 'ethers'
+import { Box, Button, Code, Container, Flex, Heading, Text } from '@chakra-ui/react'
+import { LinkIcon } from '@chakra-ui/icons'
+import { BigNumber, Contract, utils } from 'ethers'
 
 import { useFairdropContract } from '../../hooks/useFairdropContract'
 import { useMerkleDistributorContract } from '../../hooks/useMerkleDistributorContract'
+import { useERC20Contract } from '../../hooks/useERC20Contract'
+import { etherscanUrl } from '../../utils'
 import { getMerkleData } from '../../utils/ipfs'
 import { MerkleProofData } from '../../interfaces'
 
@@ -18,11 +21,14 @@ interface CampaignProps {
 export default function Campaign({ id }: CampaignProps) {
   const fairdropContract = useFairdropContract()
   const [merkleDistributorContract, setMerkleDistributorContract] = useMerkleDistributorContract()
-  const { account } = useWeb3React()
+  const [erc20Contract, setERC20Contract] = useERC20Contract()
+  const { account, chainId } = useWeb3React()
 
   const [merkleAddress, setMerkleAddress] = useState<string>()
   const [merkleData, setMerkleData] = useState<MerkleProofData>()
-  const [airdroppedToken, setAirdroppedToken] = useState<string>()
+  const [merkleAddressBalance, setMerkleAddressBalance] = useState<string>()
+  const [airdropTokenAddress, setAirdropTokenAddress] = useState<string>()
+  const [airdropTokenInfo, setAirdropTokenInfo] = useState<{ name: string; symbol: string }>()
   const [proofData, setProofData] = useState<any>()
   const [claimAmount, setClaimAmount] = useState<string>()
   const [isClaimed, setIsClaimed] = useState<boolean>()
@@ -49,35 +55,46 @@ export default function Campaign({ id }: CampaignProps) {
     }
   }, [fairdropContract, id, setMerkleDistributorContract])
 
-  // Get token info that will be airdropped
+  // Get token address that will be airdropped
   useEffect(() => {
     async function getAirdropToken(contract: Contract) {
       try {
         const token = await contract.token()
-        setAirdroppedToken(token)
+        setAirdropTokenAddress(token)
+        setERC20Contract(token)
       } catch (err) {
         console.error(err)
       }
     }
 
-    // TODO: display balance of airdropped token inside merkle contract
-
     if (merkleAddress && merkleDistributorContract) {
       getAirdropToken(merkleDistributorContract)
     }
-  }, [merkleAddress, merkleDistributorContract])
+  }, [merkleAddress, merkleDistributorContract, setERC20Contract])
+
+  // Get the rest of token info
+  useEffect(() => {
+    async function getInfo(contract: Contract, address: string) {
+      setMerkleAddressBalance((await contract.balanceOf(address)).toString())
+      const name = await contract.name()
+      const symbol = await contract.symbol()
+
+      setAirdropTokenInfo({ name, symbol })
+    }
+
+    if (merkleAddress && erc20Contract) {
+      getInfo(erc20Contract, merkleAddress)
+    }
+  }, [merkleAddress, erc20Contract])
 
   // Check if user qualifies for airdrop
   useEffect(() => {
     async function checkClaimed(contract: Contract, index: number) {
       const claimed = await contract.isClaimed(index)
-      console.log(`claimed: ${claimed}`)
       setIsClaimed(claimed)
     }
 
     if (account && merkleData && merkleDistributorContract) {
-      // Testing
-      // const claim = merkleData.claims['0x0B1FDB90501286ebe6087b6660C3a48db9898FAD']
       const claim = merkleData.claims[account]
       if (claim) {
         checkClaimed(merkleDistributorContract, claim.index)
@@ -85,6 +102,7 @@ export default function Campaign({ id }: CampaignProps) {
         setClaimAmount(BigNumber.from(claim.amount).toString())
       } else {
         console.log(`you don't qualify :(`)
+        setClaimAmount(undefined)
       }
     }
   }, [account, merkleData, merkleDistributorContract])
@@ -106,7 +124,10 @@ export default function Campaign({ id }: CampaignProps) {
       ) : (
         <>
           <Box>
-            <Text>Congrats! You can claim {claimAmount} tokens 🎉</Text>
+            <Text>
+              Congrats! You can claim <strong>{utils.formatEther(claimAmount as string)}</strong>{' '}
+              {airdropTokenInfo?.symbol || 'tokens'} 🎉
+            </Text>
           </Box>
           <br />
           <Box>
@@ -139,9 +160,40 @@ export default function Campaign({ id }: CampaignProps) {
         <Heading as="h1" size="lg">
           Campaign #{id}
         </Heading>
-        <Text>merkle address: {merkleAddress}</Text>
-        <Text>airdropped token: {airdroppedToken}</Text>
-        {claimAmount ? <ClaimInfo /> : null}
+        <Box mt={3}>
+          {merkleAddress ? (
+            <Text>
+              Merkle Contract: <Code>{merkleAddress}</Code>{' '}
+              <a href={etherscanUrl(chainId, 'address', merkleAddress)}>
+                <LinkIcon mb={1} color="blue.500" />
+              </a>
+            </Text>
+          ) : null}
+          <Box mt={3}>
+            <Heading as="h2" size="md">
+              Airdropped Token Details
+            </Heading>
+            {airdropTokenAddress ? (
+              <>
+                <Text>
+                  Address: <Code>{airdropTokenAddress}</Code>{' '}
+                  <a href={etherscanUrl(chainId, 'address', airdropTokenAddress)}>
+                    <LinkIcon mb={1} color="blue.500" />
+                  </a>
+                </Text>
+                {airdropTokenInfo ? (
+                  <Text>
+                    Token : {airdropTokenInfo.name} ({airdropTokenInfo.symbol})
+                  </Text>
+                ) : null}
+                {merkleAddressBalance ? (
+                  <Text>Balance in Merkle Contract: {utils.formatEther(merkleAddressBalance)}</Text>
+                ) : null}
+              </>
+            ) : null}
+          </Box>
+          {claimAmount ? <ClaimInfo /> : null}
+        </Box>
       </Container>
     </>
   )

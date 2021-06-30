@@ -1,10 +1,21 @@
 import { useContext } from 'react'
 import { useRouter } from 'next/router'
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, Textarea } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Heading,
+  Input,
+  Textarea,
+  Tooltip,
+} from '@chakra-ui/react'
+import { InfoIcon } from '@chakra-ui/icons'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import { Formik, Form, Field } from 'formik'
-import { Contract } from 'ethers'
+import { Contract, utils } from 'ethers'
 import { create } from 'ipfs-http-client'
 import dayjs from 'dayjs'
 
@@ -13,17 +24,17 @@ import { parseBalanceMap } from '../merkle/parse-balance-map'
 import { AddressesContext } from '../contexts'
 import Fairdrop from '../data/Fairdrop.sol/Fairdrop.json'
 
-import DatePicker from './DatePicker'
+// import DatePicker from './DatePicker'
 
 function CampaignForm() {
   const { library, account } = useWeb3React<Web3Provider>()
   const router = useRouter()
 
   const initValues = {
-    campaignName: '',
-    campaignDescription: '',
-    claimStartDate: undefined,
-    claimEndDate: undefined,
+    // campaignName: '',
+    // campaignDescription: '',
+    // claimStartDate: undefined,
+    // claimEndDate: undefined,
     tokenAddress: '',
     airdropAmount: 0,
   }
@@ -37,7 +48,7 @@ function CampaignForm() {
     const addrLeaves = addresses.map((address) => {
       return {
         address,
-        earnings: `${values.airdropAmount}`,
+        earnings: `${utils.parseEther(String(values.airdropAmount)).toString()}`,
         reasons: '',
       }
     })
@@ -54,7 +65,11 @@ function CampaignForm() {
 
         await contract.addAirdrop(values.tokenAddress, merkle.merkleRoot, path)
         const count = (await contract.count()).toString()
-        router.push(`/campaigns/${count}`)
+
+        // timeout required cause data might not be available
+        setTimeout(() => {
+          router.push(`/campaigns/${count}`)
+        }, 10000)
       } catch (err) {
         console.error(err)
       }
@@ -69,7 +84,7 @@ function CampaignForm() {
       <Formik initialValues={initValues} onSubmit={createCampaign}>
         {(props) => (
           <Form>
-            <Field name="campaignName" validate={(str: string) => validateString(str, 'Campaign Name')}>
+            {/* <Field name="campaignName" validate={(str: string) => validateString(str, 'Campaign Name')}>
               {({ field, form }: any) => (
                 <FormControl isInvalid={form.errors.campaignName && form.touched.campaignName}>
                   <FormLabel htmlFor="campaignName">Campaign Name</FormLabel>
@@ -86,11 +101,16 @@ function CampaignForm() {
                   <FormErrorMessage>{form.errors.campaignDescription}</FormErrorMessage>
                 </FormControl>
               )}
-            </Field>
+            </Field> */}
             <Field name="tokenAddress" validate={validateAddress}>
               {({ field, form }: any) => (
                 <FormControl isInvalid={form.errors.tokenAddress && form.touched.tokenAddress}>
-                  <FormLabel htmlFor="tokenAddress">Token Address</FormLabel>
+                  <FormLabel htmlFor="tokenAddress">
+                    Token Address{' '}
+                    <Tooltip hasArrow label="Use the ERC-20 address that you want to airdrop">
+                      <InfoIcon mb={1} color="blue.400" />
+                    </Tooltip>
+                  </FormLabel>
                   <Input {...field} id="tokenAddress" placeholder="0x..." />
                   <FormErrorMessage>{form.errors.tokenAddress}</FormErrorMessage>
                 </FormControl>
@@ -99,13 +119,18 @@ function CampaignForm() {
             <Field name="airdropAmount" validate={(num: number) => validatePositiveNumber(num, 'Amount')}>
               {({ field, form }: any) => (
                 <FormControl isInvalid={form.errors.airdropAmount && form.touched.airdropAmount}>
-                  <FormLabel htmlFor="airdropAmount">Airdrop Amount</FormLabel>
+                  <FormLabel htmlFor="airdropAmount">
+                    Airdrop Amount{' '}
+                    <Tooltip hasArrow label="The amount of tokens that each user can claim">
+                      <InfoIcon mb={1} color="blue.400" />
+                    </Tooltip>
+                  </FormLabel>
                   <Input {...field} type="number" id="airdropAmount" />
                   <FormErrorMessage>{form.errors.airdropAmount}</FormErrorMessage>
                 </FormControl>
               )}
             </Field>
-            <Field name="startDate">
+            {/* <Field name="startDate">
               {({ field, form }: any) => (
                 <FormControl>
                   <FormLabel htmlFor="startDate">Claim Start Date</FormLabel>
@@ -144,7 +169,7 @@ function CampaignForm() {
                   />
                 </FormControl>
               )}
-            </Field>
+            </Field> */}
             <Button
               colorScheme="purple"
               type="submit"

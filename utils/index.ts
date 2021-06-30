@@ -17,7 +17,7 @@ export function translateChainId(chainId: number): string {
   }
 }
 
-export function etherscanUrl(chainId: number, type: 'address' | 'token', path: string): string {
+export function etherscanUrl(chainId: number = 0, type: 'address' | 'token', path: string): string {
   let domain = 'https://'
 
   switch (chainId) {

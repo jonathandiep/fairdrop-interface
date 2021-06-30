@@ -21,22 +21,20 @@ export default function Home() {
         <Box mt={3}>
           <Link href="/create">
             <a>
-              <Button colorScheme="green" mr={3}>
-                Create
-              </Button>
+              <Button colorScheme="blue">Create</Button>
             </a>
           </Link>
-          <Link href="/campaigns">
+          {/* <Link href="/campaigns">
             <a>
               <Button colorScheme="blue">View</Button>
             </a>
-          </Link>
+          </Link> */}
         </Box>
         <Divider my={5} />
         <Heading as="h1" size="lg">
           Check Your Airdrops
         </Heading>
-        <Link href="/claim">
+        <Link href="/campaigns">
           <a>
             <Button colorScheme="green" mt={3}>
               Claim

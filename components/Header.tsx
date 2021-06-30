@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Button, Divider, Flex, Heading, Spacer } from '@chakra-ui/react'
+import { CopyIcon } from '@chakra-ui/icons'
 import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 
@@ -30,6 +31,7 @@ function Header() {
     return (
       <Button colorScheme="blue" variant="outline" onClick={() => navigator.clipboard.writeText(account)}>
         {`${account.substring(0, 6)}...${account.substring(account.length - 4)}`}
+        <CopyIcon ml={1} color="blue.400" />
       </Button>
     )
   }
