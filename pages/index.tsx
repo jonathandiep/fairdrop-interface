@@ -24,11 +24,6 @@ export default function Home() {
               <Button colorScheme="blue">Create</Button>
             </a>
           </Link>
-          {/* <Link href="/campaigns">
-            <a>
-              <Button colorScheme="blue">View</Button>
-            </a>
-          </Link> */}
         </Box>
         <Divider my={5} />
         <Heading as="h1" size="lg">
