@@ -25,8 +25,8 @@ export function validateAddress(address: string) {
 export function validatePositiveNumber(number: number, errorName: string) {
   let error
 
-  if (!number) {
-    error = `${errorName} required`
+  if (!Number.isFinite(Number(number))) {
+    error = `Valid ${errorName} required`
   } else if (number < 0) {
     error = `${errorName} must be greater than 0`
   }

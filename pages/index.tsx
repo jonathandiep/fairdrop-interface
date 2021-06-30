@@ -1,12 +1,15 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { Box, Container, Button, Divider, Heading } from '@chakra-ui/react'
+import { useWeb3React } from '@web3-react/core'
+import { Alert, AlertIcon, Box, Container, Button, Divider, Heading, Text } from '@chakra-ui/react'
 
 import Header from '../components/Header'
 
 export default function Home() {
+  const { chainId } = useWeb3React()
+
   return (
-    <div>
+    <Box>
       <Head>
         <title>Fairdrop</title>
         <meta name="description" content="Create airdrops with distribtion to on-chain activity" />
@@ -15,6 +18,14 @@ export default function Home() {
 
       <Header />
       <Container textAlign="center">
+        {chainId !== 4 ? (
+          <Alert status="error" mb={3}>
+            <AlertIcon />
+            <Text>
+              Please connect Metamask and use the <strong>Rinkeby</strong> network
+            </Text>
+          </Alert>
+        ) : null}
         <Heading as="h1" size="lg">
           Create an Airdrop Campaign
         </Heading>
@@ -37,6 +48,6 @@ export default function Home() {
           </a>
         </Link>
       </Container>
-    </div>
+    </Box>
   )
 }

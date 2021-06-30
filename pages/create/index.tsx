@@ -1,7 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
-import { Button, Box, Container, Flex, Heading, Input, Text, Table, Tbody, Thead, Td, Th, Tr } from '@chakra-ui/react'
+import {
+  Button,
+  Box,
+  Code,
+  Container,
+  Flex,
+  Heading,
+  Input,
+  Text,
+  Table,
+  Tbody,
+  Thead,
+  Td,
+  Th,
+  Tr,
+} from '@chakra-ui/react'
 import { Container as PaginatorContainer, Next, PageGroup, Paginator, Previous, usePaginator } from 'chakra-paginator'
 import { utils } from 'ethers'
 
@@ -33,7 +48,6 @@ function Create() {
 
   useEffect(() => {
     if (addresses.length > 0) {
-      console.log(addresses)
       const pages = Math.ceil(addresses.length / NUM_OF_ROWS)
       setPageQuantity(pages)
     }
@@ -57,7 +71,9 @@ function Create() {
           {addresses.slice((currentPage - 1) * NUM_OF_ROWS, currentPage * NUM_OF_ROWS).map((addr, idx) => (
             <Tr key={idx}>
               <Td>{(currentPage - 1) * NUM_OF_ROWS + idx + 1}</Td>
-              <Td>{addr}</Td>
+              <Td>
+                <Code>{addr}</Code>
+              </Td>
             </Tr>
           ))}
         </Tbody>

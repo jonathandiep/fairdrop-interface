@@ -1,5 +1,15 @@
 import { useContext } from 'react'
-import { Button, FormControl, FormErrorMessage, FormLabel, Input, Select } from '@chakra-ui/react'
+import {
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  Select,
+} from '@chakra-ui/react'
 import { Formik, Form, Field } from 'formik'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -29,10 +39,10 @@ async function checkAudience(values: any, actions: any, setAddresses: any) {
 }
 
 function AirdropForm() {
-  const { addresses, setAddresses } = useContext(AddressesContext)
+  const { setAddresses } = useContext(AddressesContext)
   const initValues = {
     onChainActivity: '',
-    amountUSD: 0,
+    amountUSD: '',
     startDate: undefined,
     endDate: undefined,
   }
@@ -48,6 +58,7 @@ function AirdropForm() {
                 <Select
                   placeholder="Select activity"
                   onChange={(event) => form.setFieldValue('onChainActivity', event.target.value)}
+                  maxWidth="xs"
                 >
                   <option value="uniswapv3">Uniswap v3 LP</option>
                   <option value="uniswapv2" disabled>
@@ -61,57 +72,66 @@ function AirdropForm() {
               </FormControl>
             )}
           </Field>
+
           <Field name="amountUSD" validate={(num: number) => validatePositiveNumber(num, 'USD')}>
-            {({ field, form }: any) => (
-              <FormControl isInvalid={form.errors.amountUSD && form.touched.amountUSD}>
-                <FormLabel htmlFor="amountUSD">Minimum Amount USD</FormLabel>
-                <Input type="number" {...field} id="amountUSD" />
-                <FormErrorMessage>{form.errors.amountUSD}</FormErrorMessage>
-              </FormControl>
-            )}
-          </Field>
-          <Field name="startDate">
-            {({ field, form }: any) => (
-              <FormControl>
-                <FormLabel htmlFor="startDate">Start Date</FormLabel>
-                <DatePicker
-                  onChange={(date) =>
-                    form.setFieldValue(
-                      'startDate',
-                      date
-                        ? dayjs(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`, 'YYYY-M-D')
-                        : undefined
-                    )
-                  }
-                  selectedDate={field.value ? dayjs(field.value).toDate() : undefined}
-                  isClearable
-                  showPopperArrow
-                />
-              </FormControl>
-            )}
-          </Field>
-          <Field name="endDate">
-            {({ field, form }: any) => (
-              <FormControl>
-                <FormLabel htmlFor="endDate">End Date</FormLabel>
-                <DatePicker
-                  onChange={(date) => {
-                    form.setFieldValue(
-                      'endDate',
-                      date
-                        ? dayjs(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`, 'YYYY-M-D')
-                        : undefined
-                    )
-                  }}
-                  selectedDate={field.value ? dayjs(field.value).toDate() : undefined}
-                  isClearable
-                  showPopperArrow
-                />
-              </FormControl>
-            )}
+            {({ field, form }: any) => {
+              return (
+                <FormControl isInvalid={form.errors.amountUSD && form.touched.amountUSD} mt={3}>
+                  <FormLabel htmlFor="amountUSD">Minimum Amount USD</FormLabel>
+                  <InputGroup>
+                    <InputLeftAddon>$</InputLeftAddon>
+                    <Input {...field} id="amountUSD" maxWidth="xs" placeholder="1000" />
+                  </InputGroup>
+                  <FormErrorMessage>{form.errors.amountUSD}</FormErrorMessage>
+                </FormControl>
+              )
+            }}
           </Field>
 
-          <Button colorScheme="purple" type="submit" isLoading={props.isSubmitting} isDisabled={!props.isValid}>
+          <Flex mt={2}>
+            <Field name="startDate">
+              {({ field, form }: any) => (
+                <FormControl>
+                  <FormLabel htmlFor="startDate">Start Date</FormLabel>
+                  <DatePicker
+                    onChange={(date) =>
+                      form.setFieldValue(
+                        'startDate',
+                        date
+                          ? dayjs(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`, 'YYYY-M-D')
+                          : undefined
+                      )
+                    }
+                    selectedDate={field.value ? dayjs(field.value).toDate() : undefined}
+                    isClearable
+                    showPopperArrow
+                  />
+                </FormControl>
+              )}
+            </Field>
+            <Field name="endDate">
+              {({ field, form }: any) => (
+                <FormControl>
+                  <FormLabel htmlFor="endDate">End Date</FormLabel>
+                  <DatePicker
+                    onChange={(date) => {
+                      form.setFieldValue(
+                        'endDate',
+                        date
+                          ? dayjs(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`, 'YYYY-M-D')
+                          : undefined
+                      )
+                    }}
+                    selectedDate={field.value ? dayjs(field.value).toDate() : undefined}
+                    isClearable
+                    showPopperArrow
+                  />
+                </FormControl>
+              )}
+            </Field>
+          </Flex>
+
+          <Button colorScheme="purple" type="submit" mt={4} isLoading={props.isSubmitting} isDisabled={!props.isValid}>
             See Audience
           </Button>
         </Form>
