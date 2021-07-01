@@ -33,7 +33,7 @@ export default function Home() {
           Create free and fair airdrops which can be distributed based on on-chain activity 🚀
         </Text>
 
-        <Divider my={5} />
+        <Divider my={10} />
 
         <Text fontSize="2xl" mb={2}>
           <strong>Want to get started? It&apos;s as simple as:</strong>
@@ -48,11 +48,11 @@ export default function Home() {
           <strong>3.</strong> Qualified particiants can claim their airdropped tokens 🤑
         </Text>
 
-        <Divider my={5} />
+        <Divider my={10} />
 
         <Text fontSize="lg" as="i">
-          Our interface makes it easy to deploy airdrops on Ethereum without having to deal with the typical
-          complexities of prepping for an airdrop
+          Our interface makes it easy to deploy airdrops on Ethereum without having to deal with the complexities of
+          prepping for an airdrop
         </Text>
 
         <Flex justifyContent="space-between" alignItems="center" mt={5} mx={8}>
