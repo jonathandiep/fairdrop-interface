@@ -22,7 +22,7 @@ function Create() {
       <Heading as="h1" size="lg" my={2}>
         Audience
       </Heading>
-      <AddressList addresses={addresses} />
+      <AddressList headers={['#', 'Address']} addresses={addresses} />
       {process.env.NODE_ENV === 'development' ? (
         <Box mx={10} mb={10} p={10} w="60%" border="1px" borderColor="red.100" color="red">
           <Heading size="md">Developer&apos;s Backdoor</Heading>

@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { GetServerSideProps } from 'next'
 import { useEffect, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { Box, Button, Code, Container, Flex, Heading, Text } from '@chakra-ui/react'
+import { Box, Button, Code, Container, Flex, Heading, Text, Spacer } from '@chakra-ui/react'
 import { LinkIcon } from '@chakra-ui/icons'
 import { BigNumber, Contract, utils } from 'ethers'
 
@@ -14,6 +14,8 @@ import { getMerkleData } from '../../utils/ipfs'
 import { MerkleProofData } from '../../interfaces'
 
 import Header from '../../components/Header'
+import AddressList from '../../components/AddressList'
+
 interface CampaignProps {
   id: string
 }
@@ -32,6 +34,7 @@ export default function Campaign({ id }: CampaignProps) {
   const [proofData, setProofData] = useState<any>()
   const [claimAmount, setClaimAmount] = useState<string>()
   const [isClaimed, setIsClaimed] = useState<boolean>()
+  const [addresses, setAddresses] = useState<string[]>([])
 
   // Get data from Fairdrop contract
   useEffect(() => {
@@ -107,17 +110,24 @@ export default function Campaign({ id }: CampaignProps) {
     }
   }, [account, merkleData, merkleDistributorContract])
 
+  // Extract addresses from merkle data
+  useEffect(() => {
+    if (merkleData) {
+      const airdroppedAddresses = Object.keys(merkleData.claims)
+      setAddresses(airdroppedAddresses)
+    }
+  }, [merkleData])
+
   const ClaimInfo = () => (
     <Flex
       mt={10}
-      mx={20}
+      mx={30}
       px={10}
       py={10}
       backgroundColor={isClaimed ? 'orange.100' : 'green.100'}
       alignItems="center"
       justifyContent="center"
       borderRadius="3xl"
-      flexWrap="wrap"
     >
       {isClaimed ? (
         <Text>You&apos;ve already claimed your tokens</Text>
@@ -128,20 +138,21 @@ export default function Campaign({ id }: CampaignProps) {
               Congrats! You can claim <strong>{utils.formatEther(claimAmount as string)}</strong>{' '}
               {airdropTokenInfo?.symbol || 'tokens'} 🎉
             </Text>
-          </Box>
-          <br />
-          <Box>
-            <Button
-              colorScheme="green"
-              mt={3}
-              onClick={async () => {
-                if (merkleDistributorContract && proofData) {
-                  await merkleDistributorContract.claim(proofData.index, account, proofData.amount, proofData.proof)
-                }
-              }}
-            >
-              Claim
-            </Button>
+            <Flex>
+              <Spacer />
+              <Button
+                colorScheme="green"
+                mt={3}
+                onClick={async () => {
+                  if (merkleDistributorContract && proofData) {
+                    await merkleDistributorContract.claim(proofData.index, account, proofData.amount, proofData.proof)
+                  }
+                }}
+              >
+                Claim
+              </Button>
+              <Spacer />
+            </Flex>
           </Box>
         </>
       )}
@@ -152,48 +163,64 @@ export default function Campaign({ id }: CampaignProps) {
     <>
       <Head>
         <title>Campaign Dashboard | Fairdrop</title>
-        <meta name="description" content={`Campaign Dashboard`} />
+        <meta name="description" content="Campaign Dashboard" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <Container>
+      <Container maxW="container.xl">
         <Heading as="h1" size="lg">
           Campaign #{id}
         </Heading>
-        <Box mt={3}>
-          {merkleAddress ? (
-            <Text>
-              Merkle Contract: <Code>{merkleAddress}</Code>{' '}
-              <a href={etherscanUrl(chainId, 'address', merkleAddress)}>
-                <LinkIcon mb={1} color="blue.500" />
-              </a>
-            </Text>
-          ) : null}
+        <Flex justifyContent="space-between" flexWrap="wrap">
           <Box mt={3}>
-            <Heading as="h2" size="md">
-              Airdropped Token Details
-            </Heading>
-            {airdropTokenAddress ? (
-              <>
-                <Text>
-                  Address: <Code>{airdropTokenAddress}</Code>{' '}
-                  <a href={etherscanUrl(chainId, 'address', airdropTokenAddress)}>
-                    <LinkIcon mb={1} color="blue.500" />
-                  </a>
-                </Text>
-                {airdropTokenInfo ? (
-                  <Text>
-                    Token : {airdropTokenInfo.name} ({airdropTokenInfo.symbol})
-                  </Text>
-                ) : null}
-                {merkleAddressBalance ? (
-                  <Text>Balance in Merkle Contract: {utils.formatEther(merkleAddressBalance)}</Text>
-                ) : null}
-              </>
+            {merkleAddress ? (
+              <Text>
+                Merkle Contract: <Code>{merkleAddress}</Code>{' '}
+                <a href={etherscanUrl(chainId, 'address', merkleAddress)}>
+                  <LinkIcon mb={1} color="blue.500" />
+                </a>
+              </Text>
             ) : null}
+            {addresses ? <Text># of Addresses in Airdrop: {addresses.length}</Text> : null}
+            <Box mt={3}>
+              <Heading as="h2" size="md">
+                Airdropped Token Details
+              </Heading>
+              {airdropTokenAddress ? (
+                <>
+                  <Text>
+                    Address: <Code>{airdropTokenAddress}</Code>{' '}
+                    <a href={etherscanUrl(chainId, 'address', airdropTokenAddress)}>
+                      <LinkIcon mb={1} color="blue.500" />
+                    </a>
+                  </Text>
+                  {airdropTokenInfo ? (
+                    <Text>
+                      Token : {airdropTokenInfo.name} ({airdropTokenInfo.symbol})
+                    </Text>
+                  ) : null}
+                  {merkleAddressBalance ? (
+                    <Text>
+                      Balance in Merkle Contract: {utils.formatEther(merkleAddressBalance)} {airdropTokenInfo?.symbol}
+                    </Text>
+                  ) : null}
+                </>
+              ) : null}
+            </Box>
+            {claimAmount ? <ClaimInfo /> : null}
           </Box>
-          {claimAmount ? <ClaimInfo /> : null}
-        </Box>
+
+          {addresses.length > 0 ? (
+            <Box>
+              <AddressList
+                headers={['#', 'Address', 'Claimed']}
+                addresses={addresses}
+                merkleData={merkleData}
+                merkleDistributorContract={merkleDistributorContract}
+              />
+            </Box>
+          ) : null}
+        </Flex>
       </Container>
     </>
   )

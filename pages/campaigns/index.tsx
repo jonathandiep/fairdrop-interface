@@ -20,7 +20,7 @@ interface CampaignsProps {
 export default function Campaigns({ images }: CampaignsProps) {
   const fairdropContract = useFairdropContract()
 
-  const [airdrops, setAirdrops] = useState<{ address: string; cid: string }[]>([])
+  const [airdrops, setAirdrops] = useState<{ address: string; cid: string }[]>()
 
   useEffect(() => {
     async function getAmountOfAirdrops(contract: Contract) {
@@ -51,7 +51,7 @@ export default function Campaigns({ images }: CampaignsProps) {
       </Head>
       <Header />
       <Container>
-        {airdrops.length === 0 ? (
+        {airdrops === undefined ? null : airdrops.length === 0 ? (
           <Heading as="h1" size="lg">
             No airdrops listed
           </Heading>

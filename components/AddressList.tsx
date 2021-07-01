@@ -1,9 +1,21 @@
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useWeb3React } from '@web3-react/core'
 import { Code, Flex, Table, Thead, Tr, Th, Td, Tbody } from '@chakra-ui/react'
+import { LinkIcon } from '@chakra-ui/icons'
 import { Container as PaginatorContainer, Next, PageGroup, Paginator, Previous, usePaginator } from 'chakra-paginator'
+import { Contract } from 'ethers'
+
+import { etherscanUrl } from '../utils'
+import { MerkleProofData } from '../interfaces'
+
+import ClaimedIcon from './ClaimedIcon'
 
 interface AddressListProps {
+  headers: string[]
   addresses: string[]
+  merkleData?: MerkleProofData
+  merkleDistributorContract?: Contract
 }
 
 const NUM_OF_ROWS = 25
@@ -18,7 +30,8 @@ const paginationActiveStyles = {
   colorScheme: 'purple',
 }
 
-export default function AddressList({ addresses }: AddressListProps) {
+export default function AddressList({ headers, addresses, merkleData, merkleDistributorContract }: AddressListProps) {
+  const { chainId } = useWeb3React()
   const { currentPage, setCurrentPage } = usePaginator({
     initialState: { pageSize: NUM_OF_ROWS, currentPage: 1 },
   })
@@ -37,8 +50,9 @@ export default function AddressList({ addresses }: AddressListProps) {
       <Table size="sm">
         <Thead>
           <Tr>
-            <Th>#</Th>
-            <Th>Address</Th>
+            {headers.map((title) => (
+              <Th key={title}>{title}</Th>
+            ))}
           </Tr>
         </Thead>
         <Tbody>
@@ -47,7 +61,21 @@ export default function AddressList({ addresses }: AddressListProps) {
               <Td>{(currentPage - 1) * NUM_OF_ROWS + idx + 1}</Td>
               <Td>
                 <Code>{addr}</Code>
+                <Link href={etherscanUrl(chainId, 'address', addr)}>
+                  <a>
+                    <LinkIcon mb={1} ml={1} color="blue.400" />
+                  </a>
+                </Link>
               </Td>
+              {merkleData && merkleDistributorContract ? (
+                <Td>
+                  <ClaimedIcon
+                    address={addr}
+                    merkleData={merkleData}
+                    merkleDistributorContract={merkleDistributorContract}
+                  />
+                </Td>
+              ) : null}
             </Tr>
           ))}
         </Tbody>
