@@ -120,7 +120,7 @@ export default function Campaign({ id }: CampaignProps) {
 
   const ClaimInfo = () => (
     <Flex
-      mt={10}
+      mb={10}
       mx={30}
       px={10}
       py={10}
@@ -182,7 +182,7 @@ export default function Campaign({ id }: CampaignProps) {
               </Text>
             ) : null}
             {addresses ? <Text># of Addresses in Airdrop: {addresses.length}</Text> : null}
-            <Box mt={3}>
+            <Box mt={3} mb={10}>
               <Heading as="h2" size="md">
                 Airdropped Token Details
               </Heading>
