@@ -1,13 +1,16 @@
 import { useContext } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
   Input,
+  Text,
   Textarea,
   Tooltip,
 } from '@chakra-ui/react'
@@ -78,8 +81,8 @@ function CampaignForm() {
 
   return (
     <Box w="40%">
-      <Heading as="h1" size="lg">
-        Campaign Details
+      <Heading as="h1" size="lg" mb={2}>
+        Airdrop Details
       </Heading>
       <Formik initialValues={initValues} onSubmit={createCampaign}>
         {(props) => (
@@ -106,10 +109,22 @@ function CampaignForm() {
               {({ field, form }: any) => (
                 <FormControl isInvalid={form.errors.tokenAddress && form.touched.tokenAddress}>
                   <FormLabel htmlFor="tokenAddress">
-                    Token Address{' '}
-                    <Tooltip hasArrow label="Use the ERC-20 address that you want to airdrop">
-                      <InfoIcon mb={1} color="blue.400" />
-                    </Tooltip>
+                    <Flex justifyContent="space-between">
+                      <Box>
+                        Token Address{' '}
+                        <Tooltip hasArrow label="Use the ERC-20 address that you want to airdrop">
+                          <InfoIcon mb={1} color="blue.400" />
+                        </Tooltip>
+                      </Box>
+                      {/* <Text>asdf</Text> */}
+                      <Link href="/token">
+                        <a target="_blank">
+                          <Text as="i" fontSize="sm" _hover={{ textDecoration: 'underline' }} color="blue.400">
+                            Need to create a token?
+                          </Text>
+                        </a>
+                      </Link>
+                    </Flex>
                   </FormLabel>
                   <Input {...field} id="tokenAddress" placeholder="0x..." />
                   <FormErrorMessage>{form.errors.tokenAddress}</FormErrorMessage>
