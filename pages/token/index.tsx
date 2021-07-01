@@ -5,12 +5,12 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  Badge,
   Box,
   Button,
   Container,
   Heading,
   Input,
-  Text,
 } from '@chakra-ui/react'
 import { useWeb3React } from '@web3-react/core'
 import { ContractFactory, utils } from 'ethers'
@@ -54,7 +54,10 @@ export default function Token() {
 
       <Header />
       <Container>
-        <Heading mb={3}>Create an ERC-20 Token</Heading>
+        <Heading mb={1}>Create an ERC-20 Token</Heading>
+        <Badge colorScheme="yellow" mb={2}>
+          Beta
+        </Badge>
         <Box>
           <Input onChange={(e) => setTokenName(e.target.value)} placeholder="Token Name" maxW="sm" mb={2} />
           <Input onChange={(e) => setTokenSymbol(e.target.value)} placeholder="Token Symbol" maxW="sm" mb={2} />
