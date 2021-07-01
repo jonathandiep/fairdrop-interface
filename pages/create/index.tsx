@@ -22,6 +22,9 @@ function Create() {
       <Heading as="h1" size="lg" my={2}>
         Audience
       </Heading>
+      <Text mb={2}>
+        <strong>Unique Addresses:</strong> {addresses.length}
+      </Text>
       <AddressList headers={['#', 'Address']} addresses={addresses} />
       {process.env.NODE_ENV === 'development' ? (
         <Box mx={10} mb={10} p={10} w="60%" border="1px" borderColor="red.100" color="red">
@@ -34,7 +37,7 @@ function Create() {
             size="sm"
             onClick={() => {
               console.log(injectAddr)
-              if (injectAddr && utils.isAddress(injectAddr)) {
+              if (injectAddr && utils.isAddress(injectAddr) && !addresses.includes(injectAddr)) {
                 const newAddresses = addresses.concat(injectAddr)
                 setAddresses(newAddresses)
               }
