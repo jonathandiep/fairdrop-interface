@@ -12,6 +12,8 @@ export function translateChainId(chainId: number): string {
       return 'kovan'
     case 420:
       return 'goerli'
+    case 1337:
+      return 'localhost'
     default:
       return ''
   }

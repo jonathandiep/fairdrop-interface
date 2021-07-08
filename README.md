@@ -38,6 +38,10 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
+## Environment
+
+When working on this project, use either local or rinkeby networks. If using local network, please edit `NEXT_PUBLIC_FAIRDROP_ADDRESS` inside of the `.env.development` file with the address where the Fairdrop contract is deployed.
+
 ## Generate Merkle Root
 
 ```
@@ -47,3 +51,7 @@ yarn run generate-merkle-root:example
 // generate complex example
 yarn run generate-merkle-root --input ./merkle/complex-example.json
 ```
+
+## TODO
+
+- Merge Fairdrop/Merkle contracts into this repo (using Yarn workspaces?)
