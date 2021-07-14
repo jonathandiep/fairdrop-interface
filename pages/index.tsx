@@ -18,7 +18,7 @@ export default function Home() {
 
       <Header />
       <Container>
-        {chainId !== 4 ? (
+        {chainId !== 4 && process.env.NODE_ENV !== 'development' ? (
           <Alert status="error" mb={3}>
             <AlertIcon />
             <Text>
